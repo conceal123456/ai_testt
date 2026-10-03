@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>紫禁梵刹 · 3D体素中国古典建筑群 (Three.js Voxel Architecture)</title>
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <!-- Loading Curtain -->
+  <div id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">正在构筑体素建筑群与光影...</div>
+  </div>
+
+  <!-- 3D Canvas Viewport -->
+  <div id="canvas-container"></div>
+
+  <!-- Header Banner -->
+  <header class="header-bar">
+    <h1 class="header-title">紫禁梵刹 · 体素大观</h1>
+    <p class="header-subtitle">Voxel Chinese Classical Architecture</p>
+  </header>
+
+  <!-- Left: Building Navigator -->
+  <aside class="glass-panel left-panel">
+    <div class="panel-title">中轴建筑规制</div>
+    <div class="building-list">
+      <button class="building-btn active" data-target="overview">
+        <span>🗺️</span> 鸟瞰全貌 (Overview)
+      </button>
+      <button class="building-btn" data-target="gate">
+        <span>🏛️</span> 山门殿 (Mountain Gate)
+      </button>
+      <button class="building-btn" data-target="bell_drum">
+        <span>🔔</span> 钟楼与鼓楼 (Towers)
+      </button>
+      <button class="building-btn" data-target="courtyard">
+        <span>🪷</span> 御道·香炉·荷塘
+      </button>
+      <button class="building-btn" data-target="main_hall">
+        <span>👑</span> 大雄宝殿 (Main Hall)
+      </button>
+      <button class="building-btn" data-target="side_halls">
+        <span>⛩️</span> 东西对称配殿
+      </button>
+      <button class="building-btn" data-target="pagoda">
+        <span>🗼</span> 七层玲珑宝塔 (Pagoda)
+      </button>
+    </div>
+  </aside>
+
+  <!-- Right: Control Panel -->
+  <aside class="glass-panel right-panel">
+    <div class="panel-title">环境与视角</div>
+
+    <!-- Time of Day -->
+    <div class="control-section">
+      <div class="section-label">光影时相 (Atmosphere)</div>
+      <div class="button-grid">
+        <button class="action-btn active" data-time="sunset">🌇 金辉落日</button>
+        <button class="action-btn" data-time="dawn">🌄 晨曦初照</button>
+        <button class="action-btn" data-time="night">🌌 清幽皓月</button>
+        <button class="action-btn" data-time="day">☀️ 晴昼金阳</button>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="control-section">
+      <div class="section-label">交互功能 (Controls)</div>
+      <div class="button-grid">
+        <button class="action-btn" id="btn-auto-rotate">🔄 自动漫游</button>
+        <button class="action-btn" id="btn-reset-cam">🔁 重置视角</button>
+        <button class="action-btn special-btn" id="btn-strike-bell">🔔 鸣钟祈福 (Strike Bell)</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Bottom: Stats and Hints -->
+  <footer class="bottom-bar">
+    <div class="stat-item">
+      <span>帧率:</span>
+      <span class="stat-value" id="stat-fps">60</span> FPS
+    </div>
+    <div class="stat-item">
+      <span>体素方块:</span>
+      <span class="stat-value" id="stat-voxels">--</span>
+    </div>
+    <div class="stat-item">
+      <span>渲染实例:</span>
+      <span class="stat-value" id="stat-instances">--</span>
+    </div>
+    <div class="hint-text">
+      🖱️ 鼠标左键旋转 · 右键平移 · 滚轮缩放视角
+    </div>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

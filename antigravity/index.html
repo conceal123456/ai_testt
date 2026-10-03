@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>古韵天工 · 3D体素中国古典建筑群</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <!-- 场景渲染画布 -->
+  <div id="canvas-container"></div>
+
+  <!-- 优雅加载界面 -->
+  <div id="loading-screen">
+    <div class="loader-badge"></div>
+    <div class="loader-title">古 韵 天 工</div>
+    <div class="loader-sub">正在营造体素三维古建院落...</div>
+  </div>
+
+  <!-- 顶部标题横幅 -->
+  <header class="app-header">
+    <div class="app-title">
+      <span>古韵天工</span>
+      <span class="app-badge">Three.js 3D 体素</span>
+    </div>
+    <div class="app-subtitle">中轴对称 · 飞檐斗拱 · 院落意象 · 纯体素营造</div>
+  </header>
+
+  <!-- 右上角性能状态卡片 -->
+  <aside class="stat-panel">
+    <div class="stat-item">
+      <span class="stat-label">实时帧率</span>
+      <span class="stat-value" id="stat-fps">60</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">体素总数</span>
+      <span class="stat-value" id="stat-voxels">--</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">批次(Calls)</span>
+      <span class="stat-value" id="stat-calls">3</span>
+    </div>
+  </aside>
+
+  <!-- 底部操控中心 -->
+  <main class="bottom-controls">
+    <!-- 视角切换 -->
+    <div class="control-group">
+      <span class="group-tag">视角</span>
+      <button class="c-btn btn-view active" data-view="overview">🏯 俯瞰全景</button>
+      <button class="c-btn btn-view" data-view="gate">🚪 山门迎礼</button>
+      <button class="c-btn btn-view" data-view="main">👑 庭院正殿</button>
+      <button class="c-btn btn-view" data-view="side">🏮 配殿回廊</button>
+      <button class="c-btn btn-view" data-view="pagoda">🗼 宝塔耸翠</button>
+    </div>
+
+    <!-- 光影晨昏与交互功能 -->
+    <div class="control-group">
+      <span class="group-tag">光影</span>
+      <button class="c-btn btn-time" data-time="dawn">🌅 晨曦微露</button>
+      <button class="c-btn btn-time" data-time="day">☀️ 晴昼初霁</button>
+      <button class="c-btn btn-time active" data-time="sunset">🌇 落日熔金</button>
+      <button class="c-btn btn-time" data-time="night">🌙 月夜华灯</button>
+
+      <span class="group-tag" style="margin-left: 8px;">交互</span>
+      <button class="c-btn active" id="btn-autorotate">🔄 自动巡航</button>
+      <button class="c-btn" id="btn-music">🎵 禅乐微吟 (关)</button>
+      <button class="c-btn" id="btn-wireframe">📐 网格线框</button>
+    </div>
+
+    <!-- 交互提示 -->
+    <div class="hint-badge">
+      ✦ 鼠标左键拖拽旋转视角 · 右键平移 · 滚轮缩放 · 页面打开即自动巡视 ✦
+    </div>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

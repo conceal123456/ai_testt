@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>太和华章 · 3D体素中国古典建筑群 (Voxel Chinese Architecture)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #12151a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #f0f2f5;
+    }
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* 顶部古典标题栏 */
+    .header-panel {
+      position: absolute;
+      top: 24px;
+      left: 28px;
+      z-index: 10;
+      background: rgba(18, 22, 28, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 24px;
+      border-radius: 12px;
+      border-left: 4px solid #d48817;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      pointer-events: auto;
+    }
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #f7dfa5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-badge {
+      font-size: 11px;
+      background: #8b1e1b;
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+    .header-sub {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #a4b0be;
+      line-height: 1.5;
+    }
+
+    /* 右侧控制面板：视角与氛围 */
+    .controls-panel {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+    .card-box {
+      background: rgba(18, 22, 28, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      width: 250px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #e59b23;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e0e5eb;
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+    .btn:hover {
+      background: rgba(212, 136, 23, 0.25);
+      border-color: #d48817;
+      color: #ffeedd;
+    }
+    .btn.active {
+      background: linear-gradient(135deg, #a82824 0%, #781f19 100%);
+      border-color: #f7dfa5;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(168, 40, 36, 0.4);
+    }
+    .btn.toggle-btn {
+      grid-column: span 2;
+    }
+
+    /* 底部信息栏与操作指引 */
+    .bottom-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 28px;
+      right: 28px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+    .stats-card {
+      background: rgba(18, 22, 28, 0.72);
+      backdrop-filter: blur(10px);
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      color: #8c9ba5;
+      display: flex;
+      gap: 20px;
+      pointer-events: auto;
+    }
+    .stat-item span {
+      color: #2ed573;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+    .hint-card {
+      background: rgba(18, 22, 28, 0.72);
+      backdrop-filter: blur(10px);
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      color: #a4b0be;
+      pointer-events: auto;
+    }
+
+    /* 加载中遮罩 */
+    #loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #14171d;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: opacity 0.5s ease;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(212, 136, 23, 0.2);
+      border-top-color: #d48817;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #error-box {
+      display: none;
+      margin-top: 15px;
+      color: #ff6b6b;
+      font-size: 13px;
+      max-width: 80%;
+      text-align: center;
+      background: rgba(255, 0, 0, 0.1);
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+  </style>
+
+  <!-- 传统经典脚本加载：无任何 CORS 或 file:// 限制，双击直接运行 -->
+  <script src="./libs/three.min.js"></script>
+  <script src="./libs/OrbitControls.umd.js"></script>
+  <script src="./src/app.bundle.js"></script>
+</head>
+<body>
+
+  <!-- 3D 渲染画布容器 -->
+  <div id="canvas-container"></div>
+
+  <!-- 顶部标题 -->
+  <div class="header-panel">
+    <div class="header-title">
+      太和华章
+      <span class="header-badge">3D 体素古建</span>
+    </div>
+    <div class="header-sub">
+      中轴对称院落 · 重檐歇山顶主殿 · 七级浮屠古塔 · 东西配殿 · 飞檐斗拱
+    </div>
+  </div>
+
+  <!-- 右侧控制区 -->
+  <div class="controls-panel">
+    <!-- 空间视角选择 -->
+    <div class="card-box">
+      <div class="card-title">
+        <span>空间视角</span>
+        <span style="font-size: 10px; color: #747d8c;">VIEWS</span>
+      </div>
+      <div class="button-grid">
+        <button class="btn active" data-view="overview">宏伟全览</button>
+        <button class="btn" data-view="mainHall">太和主殿</button>
+        <button class="btn" data-view="pagoda">七级宝塔</button>
+        <button class="btn" data-view="gate">山门迎客</button>
+        <button class="btn toggle-btn" data-view="topdown">中轴鸟瞰</button>
+      </div>
+    </div>
+
+    <!-- 晨昏光影选择 -->
+    <div class="card-box">
+      <div class="card-title">
+        <span>晨昏意境</span>
+        <span style="font-size: 10px; color: #747d8c;">ATMOSPHERE</span>
+      </div>
+      <div class="button-grid">
+        <button class="btn active" data-atmo="sunset">紫禁斜阳</button>
+        <button class="btn" data-atmo="morning">晨曦破晓</button>
+        <button class="btn" data-atmo="midday">晴空万里</button>
+        <button class="btn" data-atmo="night">华灯初上</button>
+      </div>
+    </div>
+
+    <!-- 运镜自转控制 -->
+    <div class="card-box">
+      <button class="btn toggle-btn active" id="btn-auto-rotate">环绕巡航: 开启中</button>
+    </div>
+  </div>
+
+  <!-- 底部状态指示 -->
+  <div class="bottom-bar">
+    <div class="stats-card">
+      <div class="stat-item">帧率: <span id="stat-fps">60</span> FPS</div>
+      <div class="stat-item">批次调用: <span id="stat-calls">--</span></div>
+      <div class="stat-item">体素总量: <span id="stat-voxels" style="color: #f7dfa5;">--</span></div>
+      <div class="stat-item">渲染引擎: <span style="color: #2ed573;">InstancedMesh 硬件加速</span></div>
+    </div>
+
+    <div class="hint-card">
+      🖱️ 鼠标操作：左键拖拽旋转 · 右键平移 · 滚轮缩放
+    </div>
+  </div>
+
+  <!-- 初次加载动画 -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <div style="color: #f7dfa5; font-size: 14px; letter-spacing: 2px;">正在雕琢 3D 体素古典建筑群...</div>
+    <div style="color: #747d8c; font-size: 11px; margin-top: 6px;">飞檐翘角 · 斗拱彩画 · 晨昏光影生成中</div>
+    <div id="error-box"></div>
+  </div>
+
+  <script>
+    window.onerror = function(msg, url, line) {
+      var errBox = document.getElementById('error-box');
+      if (errBox) {
+        errBox.style.display = 'block';
+        errBox.textContent = '初始化提示: ' + msg + ' (行 ' + line + ')';
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        if (typeof ArchitectureApp === 'undefined') {
+          throw new Error('核心模块未加载，请确保libs和src目录完整');
+        }
+
+        var container = document.getElementById('canvas-container');
+        var app = new ArchitectureApp(container);
+
+        // 数据指示
+        if (app.stats) {
+          document.getElementById('stat-voxels').textContent = app.stats.totalVoxels.toLocaleString();
+          document.getElementById('stat-calls').textContent = app.stats.drawCalls;
+        }
+
+        app.onFpsUpdate = function(fps) {
+          var el = document.getElementById('stat-fps');
+          if (el) el.textContent = fps;
+        };
+
+        // 视角切换
+        var viewButtons = document.querySelectorAll('[data-view]');
+        viewButtons.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            viewButtons.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            app.switchView(btn.getAttribute('data-view'));
+          });
+        });
+
+        // 晨昏氛围
+        var atmoButtons = document.querySelectorAll('[data-atmo]');
+        atmoButtons.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            atmoButtons.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            app.setAtmosphere(btn.getAttribute('data-atmo'));
+          });
+        });
+
+        // 自动巡航开关
+        var rotateBtn = document.getElementById('btn-auto-rotate');
+        rotateBtn.addEventListener('click', function() {
+          var running = app.toggleAutoRotate();
+          if (running) {
+            rotateBtn.classList.add('active');
+            rotateBtn.textContent = '环绕巡航: 开启中';
+          } else {
+            rotateBtn.classList.remove('active');
+            rotateBtn.textContent = '环绕巡航: 已暂停';
+          }
+        });
+
+        // 动画隐藏加载遮罩
+        setTimeout(function() {
+          var loader = document.getElementById('loader');
+          if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(function() { loader.remove(); }, 500);
+          }
+        }, 300);
+
+      } catch (err) {
+        console.error(err);
+        var errBox = document.getElementById('error-box');
+        if (errBox) {
+          errBox.style.display = 'block';
+          errBox.textContent = '加载异常: ' + err.message;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

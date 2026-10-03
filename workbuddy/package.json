@@ -1,0 +1,27 @@
+{
+  "name": "workbuddy-chinese-voxel-architecture",
+  "version": "1.0.0",
+  "description": "3D 体素中国古典建筑群场景 (Three.js Voxel Architecture)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "python -m http.server 8080"
+  },
+  "keywords": [
+    "threejs",
+    "voxel",
+    "chinese-architecture",
+    "3d",
+    "instanced-mesh"
+  ],
+  "author": "WorkBuddy",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "three": "^0.160.0"
+  }
+}
